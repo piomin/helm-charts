@@ -52,5 +52,16 @@ spec:
             value: {{ .value }}
           {{- end }}
           {{- end }}
+          {{- if or .Values.extraEnvVarsConfigMap .Values.extraEnvVarsSecret }}
+          envFrom:
+          {{- if or .Values.extraEnvVarsConfigMap }}
+          - configMapRef:
+              name: {{ .Values.extraEnvVarsConfigMap }}
+          {{- end }}
+          {{- if or .Values.extraEnvVarsSecret }}
+          - secretRef:
+              name: {{ .Values.extraEnvVarsSecret }}
+          {{- end }}
+          {{- end }}
           securityContext:
             runAsNonRoot: true
