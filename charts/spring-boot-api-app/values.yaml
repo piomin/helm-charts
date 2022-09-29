@@ -3,7 +3,7 @@ replicaCount: 1
 app:
   name: sample-spring-boot-api
   environment: dev
-  owner: piomin
+  owner: default
 
 image:
   repository: piomin/sample-spring-kotlin-microservice
