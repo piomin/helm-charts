@@ -3,6 +3,16 @@ entries:
   spring-boot-api-app:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2022-09-29T11:04:51.765238+02:00"
+    description: A Helm chart for Kubernetes
+    digest: 986d492e934cfeab1751e57ec337f75d6d7062a1b7cc92268a52087b2dd57cf8
+    name: spring-boot-api-app
+    type: application
+    urls:
+    - https://github.com/piomin/helm-charts/releases/download/spring-boot-api-app-0.3.0/spring-boot-api-app-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2022-09-28T16:40:55.790003+02:00"
     description: A Helm chart for Kubernetes
     digest: c8168d1f3a5d806cbbb88cdd3d837b6ff8db1e7ef57342dd484b0e8abb303a39
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://github.com/piomin/helm-charts/releases/download/spring-boot-api-app-0.1.0/spring-boot-api-app-0.1.0.tgz
     version: 0.1.0
-generated: "2022-09-28T16:40:55.790024+02:00"
+generated: "2022-09-29T11:04:51.765256+02:00"
