@@ -55,10 +55,16 @@
       "type": "object",
       "form": true,
       "properties": {
-        "type": "string",
-        "title": "Service Type",
-        "form": true,
-        "enum": ["ClusterIP", "NodePort", "LoadBalancer"]
+        "serviceType": {
+          "type": "string",
+          "title": "Service Type",
+          "form": true,
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
+        }
       }
     },
     "resources": {
@@ -98,10 +104,14 @@
       "type": "object",
       "form": true,
       "properties": {
-        "type": "array",
-        "form": true,
-        "title": "Add a port with name",
-        "items": { "$ref": "#/$defs/port" }
+        "port": {
+          "type": "array",
+          "form": true,
+          "title": "Add a port with name",
+          "items": {
+            "$ref": "#/$defs/port"
+          }
+        }
       }
     }
   },
