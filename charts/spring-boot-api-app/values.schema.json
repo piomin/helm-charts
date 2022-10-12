@@ -55,7 +55,7 @@
       "type": "object",
       "form": true,
       "properties": {
-        "serviceType": {
+        "type": {
           "type": "string",
           "title": "Service Type",
           "form": true,
@@ -101,17 +101,10 @@
     "ports": {
       "description": "Container Ports",
       "title": "Ports",
-      "type": "object",
+      "type": "array",
       "form": true,
-      "properties": {
-        "port": {
-          "type": "array",
-          "form": true,
-          "title": "Add a port with name",
-          "items": {
-            "$ref": "#/$defs/port"
-          }
-        }
+      "items": {
+        "$ref": "#/$defs/port"
       }
     }
   },
