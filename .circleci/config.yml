@@ -16,25 +16,29 @@ jobs:
       - run:
           name: Run unit tests
           command: helm unittest charts/*
-      - run:
-          name: Package chart
-          command: helm package charts/* -d .deploy
-      - run:
-          name: Install chart releaser
-          command: |
-            curl -L -o /tmp/cr.tgz https://github.com/helm/chart-releaser/releases/download/v1.5.0/chart-releaser_1.5.0_linux_amd64.tar.gz
-            tar -xv -C /tmp -f /tmp/cr.tgz
-            mv /tmp/cr ~/bin/cr
-      - run:
-          name: Release chart
-          command: cr upload -o piomin -r helm-charts -p .deploy
-      - run:
-          name: Create index on GitHub pages
-          command: |
-            git checkout --orphan gh-pages
-            cr index -i ./index.yaml -p .deploy -o piomin -r helm-charts
-            git commit -m "New release"
-            git push
+      - when:
+          condition:
+            equal: [ master, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Package chart
+                command: helm package charts/* -d .deploy
+            - run:
+                name: Install chart releaser
+                command: |
+                  curl -L -o /tmp/cr.tgz https://github.com/helm/chart-releaser/releases/download/v1.5.0/chart-releaser_1.5.0_linux_amd64.tar.gz
+                  tar -xv -C /tmp -f /tmp/cr.tgz
+                  mv /tmp/cr ~/bin/cr
+            - run:
+                name: Release chart
+                command: cr upload -o piomin -r helm-charts -p .deploy
+            - run:
+                name: Create index on GitHub pages
+                command: |
+                  git checkout --orphan gh-pages
+                  cr index -i ./index.yaml -p .deploy -o piomin -r helm-charts --push
+      #            git commit -m "New release"
+      #            git push
 
 workflows:
   helm_test:
