@@ -35,10 +35,13 @@ jobs:
             - run:
                 name: Create index on GitHub pages
                 command: |
+                  git config user.email "job@circleci.com"
+                  git config user.name "CircleCI"
                   git checkout --orphan gh-pages
-                  cr index -i ./index.yaml -p .deploy -o piomin -r helm-charts --push
-      #            git commit -m "New release"
-      #            git push
+                  cr index -i ./index.yaml -p .deploy -o piomin -r helm-charts
+                  git add index.yaml
+                  git commit -m "New release" -o index.yaml
+                  git push --set-upstream origin gh-pages
 
 workflows:
   helm_test:
