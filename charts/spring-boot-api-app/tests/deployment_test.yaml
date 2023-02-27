@@ -1,0 +1,45 @@
+suite: test deployment
+values:
+  - ./values/test.yaml
+templates:
+  - templates/deployment.yaml
+chart:
+  version: 0.3.2+test
+  appVersion: 1.0.0
+tests:
+  - it: should pass all kinds of assertion
+    template: templates/deployment.yaml
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[?(@.name == "sample-spring-boot-api")].image
+          value: piomin/sample-spring-kotlin-microservice:1.0
+      - equal:
+          path: metadata.labels.app
+          value: sample-spring-boot-api
+      - equal:
+          path: metadata.labels.env
+          value: dev
+      - equal:
+          path: metadata.labels.owner
+          value: default
+      - matchRegex:
+          path: metadata.name
+          pattern: ^.*-api$
+      - contains:
+          path: spec.template.spec.containers[?(@.name == "sample-spring-boot-api")].ports
+          content:
+            containerPort: 8080
+            name: http
+      - notContains:
+          path: spec.template.spec.containers[?(@.name == "sample-spring-boot-api")].ports
+          content:
+            containerPort: 80
+      - isNotEmpty:
+          path: spec.template.spec.containers[?(@.name == "sample-spring-boot-api")].livenessProbe
+      - isNotEmpty:
+          path: spec.template.spec.containers[?(@.name == "sample-spring-boot-api")].readinessProbe
+      - isKind:
+          of: Deployment
+      - isAPIVersion:
+          of: apps/v1
