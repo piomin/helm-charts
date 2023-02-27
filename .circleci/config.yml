@@ -16,8 +16,28 @@ jobs:
       - run:
           name: Run unit tests
           command: helm unittest charts/*
+      - run:
+          name: Package chart
+          command: helm package charts/* -d .deploy
+      - run:
+          name: Install chart releaser
+          command: |
+            curl -L -o /tmp/cr.tgz https://github.com/helm/chart-releaser/releases/download/v1.0.0-beta.1/chart-releaser_1.0.0-beta.1_linux_amd64.tar.gz
+            tar -xv -C /tmp -f /tmp/cr.tgz
+            mv /tmp/cr ~/bin/cr
+      - run:
+          name: Create index on GitHub pages
+          command: |
+            git checkout --orphan gh-pages
+            cr index
+            git commit -m "New release"
+            git push
+      - run:
+          name: Release chart
+          command: cr upload --owner piomin --git-repo helm-charts --package-path .deploy
 
 workflows:
   helm_test:
     jobs:
-      - build
+      - build:
+          context: GitHub
