@@ -7,7 +7,7 @@ app:
 
 image:
   repository: piomin/sample-spring-kotlin-microservice
-  tag: "1.0"
+  tag: "1.1"
 
 nameOverride: ""
 fullnameOverride: ""
