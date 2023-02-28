@@ -2,6 +2,14 @@
 
 ## Parameters
 
+### General
+
+| Name           | Description                                 | Value |
+|----------------|---------------------------------------------|-------|
+| `replicaCount` | Number of replicas                          | 1     |
+| `envs`         | List of environment variables (name, value) | []    |
+| `ports`        | List of exposed ports (name, value)         | []    |
+
 ### Image parameters
 
 | Name                | Description                                                  | Value                |
