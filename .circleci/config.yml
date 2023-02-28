@@ -41,7 +41,7 @@ jobs:
                   cr index -i ./index.yaml -p .deploy -o piomin -r helm-charts
                   git add index.yaml
                   git commit -m "New release" -o index.yaml
-                  git push --set-upstream origin gh-pages
+                  git push --set-upstream --force origin gh-pages
 
 workflows:
   helm_test:
