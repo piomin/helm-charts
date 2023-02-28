@@ -17,6 +17,13 @@
 | `app.environment`   | The value of `env` label                                     | `dev`                |
 | `app.owner`         | The value of `owner` label                                   | `default`            |
 
+### Global
+
+| Name               | Description       | Value |
+|--------------------|-------------------|-------|
+| `nameOverride`     | The name of chart | ``    |
+| `fullnameOverride` | The name of app   | ``    |
+
 ### Resources
 
 | Name                        | Description        | Value    |
