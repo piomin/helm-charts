@@ -1,0 +1,50 @@
+replicaCount: 1
+
+app:
+  name: sample-spring-boot-api
+  environment: dev
+  owner: default
+
+image:
+  repository: piomin/sample-spring-kotlin-microservice
+  tag: "1.1"
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+
+ports:
+  - name: http
+    value: 8080
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+liveness:
+  initialDelaySeconds: 10
+  port: http
+  path: /actuator/health/liveness
+  failureThreshold: 3
+  successThreshold: 1
+  timeoutSeconds: 3
+  periodSeconds: 5
+
+readiness:
+  initialDelaySeconds: 10
+  port: http
+  path: /actuator/health/readiness
+  failureThreshold: 3
+  successThreshold: 1
+  timeoutSeconds: 3
+  periodSeconds: 5
+
+envs:
+  - name: INFO
+    value: Spring Boot REST API

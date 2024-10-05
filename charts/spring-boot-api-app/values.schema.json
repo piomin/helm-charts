@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "image": {
+      "description": "Container Image",
+      "title": "Image",
+      "form": true,
+      "properties": {
+        "repository": {
+          "type": "string",
+          "form": true,
+          "title": "The full address of repository"
+        },
+        "tag": {
+          "type": "string",
+          "form": true,
+          "title": "The image tag"
+        }
+      },
+      "type": "object",
+      "required": [ "repository", "tag" ]
+    },
+    "app": {
+      "description": "Application Settings",
+      "properties": {
+        "name": {
+          "type": "string",
+          "form": true,
+          "title": "The name of Deployment on Kubernetes"
+        },
+        "environment": {
+          "type": "string",
+          "form": true,
+          "title": "The label indicating app environment"
+        },
+        "owner": {
+          "type": "string",
+          "form": true,
+          "title": "The owner name"
+        }
+      },
+      "type": "object",
+      "required": [ "name" ]
+    },
+    "replicaCount": {
+      "title": "Number of replicas",
+      "minimum": 1,
+      "form": true,
+      "type": "integer"
+    },
+    "service": {
+      "description": "Service",
+      "title": "Service",
+      "type": "object",
+      "form": true,
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Service Type",
+          "form": true,
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "title": "Required Resources",
+      "description": "Configure resource requests",
+      "form": true,
+      "properties": {
+        "requests": {
+          "type": "object",
+          "properties": {
+            "memory": {
+              "type": "string",
+              "form": true,
+              "render": "slider",
+              "title": "Memory Request",
+              "sliderMin": 10,
+              "sliderMax": 2048,
+              "sliderUnit": "Mi"
+            },
+            "cpu": {
+              "type": "string",
+              "form": true,
+              "render": "slider",
+              "title": "CPU Request",
+              "sliderMin": 10,
+              "sliderMax": 2000,
+              "sliderUnit": "m"
+            }
+          }
+        }
+      }
+    },
+    "ports": {
+      "description": "Container Ports",
+      "title": "Ports",
+      "type": "array",
+      "form": true,
+      "items": {
+        "$ref": "#/$defs/port"
+      }
+    }
+  },
+  "$defs": {
+    "port": {
+      "type": "object",
+      "required": [ "name", "value" ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the port."
+        },
+        "value": {
+          "type": "integer",
+          "description": "The number of port."
+        }
+      }
+    }
+  },
+  "title": "Spring Boot API App"
+}
