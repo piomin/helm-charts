@@ -64,3 +64,11 @@
 | `readiness.failureThreshold`     | Number of max failures in row                     | 3                            | 
 | `readiness.successThreshold`     | Minimum consecutive successes to be successful    | 1                            | 
 | `readiness.periodSeconds`        | How often (in seconds) to perform the probe       | 5                            |
+
+### Envs
+
+| Name                    | Description                                         | Value |
+|-------------------------|-----------------------------------------------------|-------|
+| `envs`                  | List of included environment variables to container | []    |
+| `extraEnvVarsSecret`    | List of included secret env refs to container       | []    |
+| `extraEnvVarsConfigMap` | List of included configmap env refs to container    | []    |

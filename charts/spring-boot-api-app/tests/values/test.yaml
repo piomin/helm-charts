@@ -6,3 +6,8 @@ app:
 image:
   repository: piomin/sample-test
   tag: "1.1"
+
+extraEnvVarsSecret:
+  - envVarName: DATABASE_PASS
+    key: password
+    name: db

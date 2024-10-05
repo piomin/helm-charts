@@ -4,7 +4,7 @@ values:
 templates:
   - templates/deployment.yaml
 chart:
-  version: 0.3.5+test
+  version: 0.3.8+test
   appVersion: 1.0.0
 tests:
   - it: should pass all kinds of assertion
@@ -42,6 +42,8 @@ tests:
           path: spec.template.spec.containers[?(@.name == "sample-spring-boot-api")].livenessProbe
       - isNotEmpty:
           path: spec.template.spec.containers[?(@.name == "sample-spring-boot-api")].readinessProbe
+      - isNotEmpty:
+          path: spec.template.spec.containers[?(@.name == "sample-spring-boot-api")].env
       - isKind:
           of: Deployment
       - isAPIVersion:

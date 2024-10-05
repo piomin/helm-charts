@@ -51,16 +51,23 @@ spec:
           - name: {{ .name }}
             value: {{ .value }}
           {{- end }}
-          {{- end }}
-          {{- if or .Values.extraEnvVarsConfigMap .Values.extraEnvVarsSecret }}
-          envFrom:
           {{- if or .Values.extraEnvVarsConfigMap }}
-          - configMapRef:
-              name: {{ .Values.extraEnvVarsConfigMap }}
+          {{- range .Values.extraEnvVarsConfigMap }}
+          - name: {{ .envVarName }}
+            valueFrom:
+              configMapRef:
+                key: {{ .key }}
+                name: {{ .name }}
+          {{- end }}
           {{- end }}
           {{- if or .Values.extraEnvVarsSecret }}
-          - secretRef:
-              name: {{ .Values.extraEnvVarsSecret }}
+          {{- range .Values.extraEnvVarsSecret }}
+          - name: {{ .envVarName }}
+            valueFrom:
+              secretKeyRef:
+                key: {{ .key }}
+                name: {{ .name }}
+          {{- end }}
           {{- end }}
           {{- end }}
           securityContext:
