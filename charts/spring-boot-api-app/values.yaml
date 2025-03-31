@@ -48,3 +48,8 @@ readiness:
 envs:
   - name: INFO
     value: Spring Boot REST API
+
+ingress:
+  enabled: false
+
+message: Hello!
