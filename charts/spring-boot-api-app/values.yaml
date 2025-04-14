@@ -53,3 +53,7 @@ ingress:
   enabled: false
 
 message: Hello!
+
+secrets:
+  enabled: false
+  values: []

@@ -50,3 +50,7 @@ envs:
     value: Spring Boot REST API
 
 message: Hello!
+
+secrets:
+  enabled: false
+  values: []

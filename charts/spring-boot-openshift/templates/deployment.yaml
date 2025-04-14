@@ -72,5 +72,10 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
+          {{- if .Values.secrets.enabled -}}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.app.name }}
+          {{- end }}
           securityContext:
             runAsNonRoot: true
