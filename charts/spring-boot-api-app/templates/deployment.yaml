@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  labels:
+    app: {{ .Values.app.name }}
+    env: {{ .Values.app.environment }}
+    owner: {{ .Values.app.owner }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+        env: {{ .Values.app.environment }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.liveness.initialDelaySeconds }}
+            httpGet:
+              port: {{ .Values.liveness.port }}
+              path: {{ .Values.liveness.path }}
+            failureThreshold: {{ .Values.liveness.failureThreshold }}
+            successThreshold: {{ .Values.liveness.successThreshold }}
+            timeoutSeconds: {{ .Values.liveness.timeoutSeconds }}
+            periodSeconds: {{ .Values.liveness.periodSeconds }}
+          readinessProbe:
+            initialDelaySeconds: {{ .Values.readiness.initialDelaySeconds }}
+            httpGet:
+              port: {{ .Values.readiness.port }}
+              path: {{ .Values.readiness.path }}
+            failureThreshold: {{ .Values.readiness.failureThreshold }}
+            successThreshold: {{ .Values.readiness.successThreshold }}
+            timeoutSeconds: {{ .Values.readiness.timeoutSeconds }}
+            periodSeconds: {{ .Values.readiness.periodSeconds }}
+          ports:
+          {{- range .Values.ports }}
+          - containerPort: {{ .value }}
+            name: {{ .name }}
+          {{- end }}
+          {{- if .Values.envs }}
+          env:
+          {{- range .Values.envs }}
+          - name: {{ .name }}
+            value: {{ .value }}
+          {{- end }}
+          {{- if or .Values.extraEnvVarsConfigMap }}
+          {{- range .Values.extraEnvVarsConfigMap }}
+          - name: {{ .envVarName }}
+            valueFrom:
+              configMapRef:
+                key: {{ .key }}
+                name: {{ .name }}
+          {{- end }}
+          {{- end }}
+          {{- if or .Values.extraEnvVarsSecret }}
+          {{- range .Values.extraEnvVarsSecret }}
+          - name: {{ .envVarName }}
+            valueFrom:
+              secretKeyRef:
+                key: {{ .key }}
+                name: {{ .name }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.secrets.enabled }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.app.name }}
+          {{- end }}
+          securityContext:
+            runAsNonRoot: true

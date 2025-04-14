@@ -1,0 +1,49 @@
+version: 2.1
+
+orbs:
+  helm: circleci/helm@3.1.0
+
+jobs:
+  build:
+    docker:
+      - image: cimg/base:2025.04
+    steps:
+      - checkout
+      - helm/install_helm_client
+      - helm/install_helm_plugin:
+          helm_plugin_url: https://github.com/helm-unittest/helm-unittest
+      - run:
+          name: Run unit tests
+          command: helm unittest charts/*
+      - when:
+          condition:
+            equal: [ master, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Package chart
+                command: helm package charts/* -d .deploy
+            - run:
+                name: Install chart releaser
+                command: |
+                  curl -L -o /tmp/cr.tgz https://github.com/helm/chart-releaser/releases/download/v1.5.0/chart-releaser_1.5.0_linux_amd64.tar.gz
+                  tar -xv -C /tmp -f /tmp/cr.tgz
+                  mv /tmp/cr ~/bin/cr
+            - run:
+                name: Release chart
+                command: cr upload -o piomin -r helm-charts -p .deploy
+            - run:
+                name: Create index on GitHub pages
+                command: |
+                  git config user.email "job@circleci.com"
+                  git config user.name "CircleCI"
+                  git checkout --orphan gh-pages
+                  cr index -i ./index.yaml -p .deploy -o piomin -r helm-charts
+                  git add index.yaml
+                  git commit -m "New release"
+                  git push --set-upstream --force origin gh-pages
+
+workflows:
+  helm_test:
+    jobs:
+      - build:
+          context: GitHub
