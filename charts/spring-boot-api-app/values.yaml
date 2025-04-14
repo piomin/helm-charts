@@ -56,4 +56,4 @@ message: Hello!
 
 secrets:
   enabled: false
-  values: []
+  values: {}

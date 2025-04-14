@@ -72,7 +72,7 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
-          {{- if .Values.secrets.enabled -}}
+          {{- if .Values.secrets.enabled }}
           envFrom:
             - secretRef:
                 name: {{ .Values.app.name }}
