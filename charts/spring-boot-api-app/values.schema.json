@@ -73,6 +73,13 @@
       "description": "Configure resource requests",
       "form": true,
       "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "memory": { "type": "string", "title": "Memory Limit" },
+            "cpu": { "type": "string", "title": "CPU Limit" }
+          }
+        },
         "requests": {
           "type": "object",
           "properties": {
@@ -152,11 +159,40 @@
         "tls": { "type": "array" }
       }
     },
+    "liveness": {
+      "description": "Liveness probe",
+      "title": "Liveness probe",
+      "type": "object",
+      "properties": {
+        "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+        "port": { "type": ["string", "integer"] },
+        "path": { "type": "string" },
+        "failureThreshold": { "type": "integer", "minimum": 1 },
+        "successThreshold": { "type": "integer", "minimum": 1 },
+        "timeoutSeconds": { "type": "integer", "minimum": 1 },
+        "periodSeconds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "readiness": {
+      "description": "Readiness probe",
+      "title": "Readiness probe",
+      "type": "object",
+      "properties": {
+        "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+        "port": { "type": ["string", "integer"] },
+        "path": { "type": "string" },
+        "failureThreshold": { "type": "integer", "minimum": 1 },
+        "successThreshold": { "type": "integer", "minimum": 1 },
+        "timeoutSeconds": { "type": "integer", "minimum": 1 },
+        "periodSeconds": { "type": "integer", "minimum": 1 }
+      }
+    },
     "ports": {
       "description": "Container Ports",
       "title": "Ports",
       "type": "array",
       "form": true,
+      "minItems": 1,
       "items": {
         "$ref": "#/$defs/port"
       }
@@ -187,5 +223,6 @@
       }
     }
   },
+  "required": [ "ports" ],
   "title": "Spring Boot API App"
 }

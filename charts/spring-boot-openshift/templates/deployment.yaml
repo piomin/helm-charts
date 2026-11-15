@@ -6,6 +6,7 @@ metadata:
     app: {{ .Values.app.name }}
     env: {{ .Values.app.environment }}
     owner: {{ .Values.app.owner }}
+    {{- include "spring-boot-openshift.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -16,6 +17,7 @@ spec:
       labels:
         app: {{ .Values.app.name }}
         env: {{ .Values.app.environment }}
+        {{- include "spring-boot-openshift.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: {{ .Values.app.name }}
