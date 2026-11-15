@@ -1,0 +1,22 @@
+suite: test values schema
+values:
+  - ./values/test.yaml
+templates:
+  - templates/service.yaml
+tests:
+  - it: should reject empty ports
+    set:
+      ports: []
+    asserts:
+      - failedTemplate: {}
+  - it: should reject non-integer probe period
+    set:
+      liveness.periodSeconds: "abc"
+    asserts:
+      - failedTemplate: {}
+  - it: should accept numeric probe port
+    set:
+      liveness.port: 8080
+    asserts:
+      - isKind:
+          of: Service

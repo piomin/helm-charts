@@ -51,9 +51,20 @@ envs:
 
 ingress:
   enabled: false
+  className: ""
+  host: ""
+  path: /
+  pathType: Prefix
+  servicePort: http
+  annotations: {}
+  tls: []
 
 message: Hello!
 
 secrets:
   enabled: false
   values: {}
+
+extraEnvVarsConfigMap: []
+
+extraEnvVarsSecret: []

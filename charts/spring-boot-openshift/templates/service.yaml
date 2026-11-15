@@ -6,6 +6,7 @@ metadata:
     app: {{ .Values.app.name }}
     env: {{ .Values.app.environment }}
     owner: {{ .Values.app.owner }}
+    {{- include "spring-boot-openshift.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   selector:

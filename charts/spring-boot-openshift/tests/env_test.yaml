@@ -1,0 +1,79 @@
+suite: test environment variables
+values:
+  - ./values/test.yaml
+templates:
+  - templates/deployment.yaml
+tests:
+  - it: should render secret reference with secretKeyRef
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DATABASE_PASS
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: db
+  - it: should render configmap reference with configMapKeyRef
+    set:
+      extraEnvVarsConfigMap:
+        - envVarName: LEVEL
+          key: level
+          name: cfg
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: LEVEL
+            valueFrom:
+              configMapKeyRef:
+                key: level
+                name: cfg
+  - it: should render extra env vars even when envs is empty
+    set:
+      envs: []
+    asserts:
+      - exists:
+          path: spec.template.spec.containers[0].env
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DATABASE_PASS
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: db
+  - it: should quote plain values so they stay strings
+    set:
+      envs:
+        - name: FLAG
+          value: "true"
+        - name: PORT
+          value: "8080"
+        - name: TEXT
+          value: "a: b"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FLAG
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PORT
+            value: "8080"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TEXT
+            value: "a: b"
+  - it: should render message as quoted string
+    set:
+      message: "123"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: message
+            value: "123"

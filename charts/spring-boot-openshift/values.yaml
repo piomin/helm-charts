@@ -49,8 +49,21 @@ envs:
   - name: INFO
     value: Spring Boot REST API
 
+route:
+  enabled: true
+  host: ""
+  targetPort: ""
+  tls:
+    enabled: false
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
 message: Hello!
 
 secrets:
   enabled: false
   values: {}
+
+extraEnvVarsConfigMap: []
+
+extraEnvVarsSecret: []

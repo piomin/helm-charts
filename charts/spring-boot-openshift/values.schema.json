@@ -51,7 +51,6 @@
     },
     "message": {
       "title": "Root endpoint message",
-      "minimum": 1,
       "form": true,
       "type": "string"
     },
@@ -79,6 +78,13 @@
       "description": "Configure resource requests",
       "form": true,
       "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "memory": { "type": "string", "title": "Memory Limit" },
+            "cpu": { "type": "string", "title": "CPU Limit" }
+          }
+        },
         "requests": {
           "type": "object",
           "properties": {
@@ -104,17 +110,114 @@
         }
       }
     },
+    "envs": {
+      "description": "Environment variables",
+      "title": "Environment variables",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "name", "value" ],
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": ["string", "number", "boolean"] }
+        }
+      }
+    },
+    "extraEnvVarsSecret": {
+      "description": "Environment variables read from Secret keys",
+      "title": "Env vars from Secrets",
+      "type": "array",
+      "items": { "$ref": "#/$defs/envRef" }
+    },
+    "extraEnvVarsConfigMap": {
+      "description": "Environment variables read from ConfigMap keys",
+      "title": "Env vars from ConfigMaps",
+      "type": "array",
+      "items": { "$ref": "#/$defs/envRef" }
+    },
+    "secrets": {
+      "description": "Secret created from the given values and injected with envFrom",
+      "title": "Secrets",
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "values": { "type": "object" }
+      }
+    },
+    "route": {
+      "description": "OpenShift Route",
+      "title": "Route",
+      "type": "object",
+      "form": true,
+      "properties": {
+        "enabled": { "type": "boolean", "form": true, "title": "Create Route" },
+        "host": { "type": "string", "title": "Host (generated when empty)" },
+        "targetPort": { "type": "string", "title": "Name of the target port (defaults to the first port)" },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "termination": {
+              "type": "string",
+              "enum": [ "edge", "passthrough", "reencrypt" ]
+            },
+            "insecureEdgeTerminationPolicy": {
+              "type": "string",
+              "enum": [ "None", "Allow", "Redirect" ]
+            }
+          }
+        }
+      }
+    },
+    "liveness": {
+      "description": "Liveness probe",
+      "title": "Liveness probe",
+      "type": "object",
+      "properties": {
+        "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+        "port": { "type": ["string", "integer"] },
+        "path": { "type": "string" },
+        "failureThreshold": { "type": "integer", "minimum": 1 },
+        "successThreshold": { "type": "integer", "minimum": 1 },
+        "timeoutSeconds": { "type": "integer", "minimum": 1 },
+        "periodSeconds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "readiness": {
+      "description": "Readiness probe",
+      "title": "Readiness probe",
+      "type": "object",
+      "properties": {
+        "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+        "port": { "type": ["string", "integer"] },
+        "path": { "type": "string" },
+        "failureThreshold": { "type": "integer", "minimum": 1 },
+        "successThreshold": { "type": "integer", "minimum": 1 },
+        "timeoutSeconds": { "type": "integer", "minimum": 1 },
+        "periodSeconds": { "type": "integer", "minimum": 1 }
+      }
+    },
     "ports": {
       "description": "Container Ports",
       "title": "Ports",
       "type": "array",
       "form": true,
+      "minItems": 1,
       "items": {
         "$ref": "#/$defs/port"
       }
     }
   },
   "$defs": {
+    "envRef": {
+      "type": "object",
+      "required": [ "envVarName", "key", "name" ],
+      "properties": {
+        "envVarName": { "type": "string", "description": "Name of the environment variable." },
+        "key": { "type": "string", "description": "Key in the Secret or ConfigMap." },
+        "name": { "type": "string", "description": "Name of the Secret or ConfigMap." }
+      }
+    },
     "port": {
       "type": "object",
       "required": [ "name", "value" ],
@@ -130,5 +233,6 @@
       }
     }
   },
+  "required": [ "ports" ],
   "title": "Spring Boot API App"
 }

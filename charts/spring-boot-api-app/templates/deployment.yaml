@@ -6,6 +6,7 @@ metadata:
     app: {{ .Values.app.name }}
     env: {{ .Values.app.environment }}
     owner: {{ .Values.app.owner }}
+    {{- include "spring-boot-api-app.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -16,6 +17,7 @@ spec:
       labels:
         app: {{ .Values.app.name }}
         env: {{ .Values.app.environment }}
+        {{- include "spring-boot-api-app.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: {{ .Values.app.name }}
@@ -45,29 +47,25 @@ spec:
           - containerPort: {{ .value }}
             name: {{ .name }}
           {{- end }}
-          {{- if .Values.envs }}
+          {{- if or .Values.envs .Values.extraEnvVarsConfigMap .Values.extraEnvVarsSecret }}
           env:
           {{- range .Values.envs }}
           - name: {{ .name }}
-            value: {{ .value }}
+            value: {{ .value | quote }}
           {{- end }}
-          {{- if or .Values.extraEnvVarsConfigMap }}
           {{- range .Values.extraEnvVarsConfigMap }}
           - name: {{ .envVarName }}
             valueFrom:
-              configMapRef:
+              configMapKeyRef:
                 key: {{ .key }}
                 name: {{ .name }}
           {{- end }}
-          {{- end }}
-          {{- if or .Values.extraEnvVarsSecret }}
           {{- range .Values.extraEnvVarsSecret }}
           - name: {{ .envVarName }}
             valueFrom:
               secretKeyRef:
                 key: {{ .key }}
                 name: {{ .name }}
-          {{- end }}
           {{- end }}
           {{- end }}
           {{- if .Values.secrets.enabled }}

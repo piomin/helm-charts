@@ -49,14 +49,3 @@ Selector labels
 app.kubernetes.io/name: {{ include "spring-boot-api-app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "spring-boot-api-app.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "spring-boot-api-app.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
