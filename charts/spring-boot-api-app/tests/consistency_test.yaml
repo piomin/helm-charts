@@ -1,0 +1,33 @@
+suite: test ingress matches service
+values:
+  - ./values/test.yaml
+set:
+  ingress.enabled: true
+  ports:
+    - name: web
+      value: 9090
+  ingress.servicePort: web
+templates:
+  - templates/ingress.yaml
+  - templates/service.yaml
+tests:
+  - it: ingress backend should point at an existing service and port
+    asserts:
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: sample-spring-boot-api
+        template: templates/ingress.yaml
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.name
+          value: web
+        template: templates/ingress.yaml
+      - equal:
+          path: metadata.name
+          value: sample-spring-boot-api
+        template: templates/service.yaml
+      - contains:
+          path: spec.ports
+          content:
+            port: 9090
+            name: web
+        template: templates/service.yaml

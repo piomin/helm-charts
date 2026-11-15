@@ -1,0 +1,55 @@
+suite: test route
+values:
+  - ./values/test.yaml
+templates:
+  - templates/route.yaml
+tests:
+  - it: should render route targeting first port name
+    asserts:
+      - isKind:
+          of: Route
+      - equal:
+          path: spec.to.name
+          value: sample-spring-boot-api
+      - equal:
+          path: spec.port.targetPort
+          value: http
+      - notExists:
+          path: spec.tls
+      - notExists:
+          path: spec.host
+  - it: should follow renamed port
+    set:
+      ports:
+        - name: web
+          value: 9090
+    asserts:
+      - equal:
+          path: spec.port.targetPort
+          value: web
+  - it: should allow explicit targetPort, host and tls
+    set:
+      route:
+        enabled: true
+        host: app.example.com
+        targetPort: metrics
+        tls:
+          enabled: true
+          termination: edge
+          insecureEdgeTerminationPolicy: Redirect
+    asserts:
+      - equal:
+          path: spec.port.targetPort
+          value: metrics
+      - equal:
+          path: spec.host
+          value: app.example.com
+      - equal:
+          path: spec.tls.termination
+          value: edge
+  - it: should not render when disabled
+    set:
+      route.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0

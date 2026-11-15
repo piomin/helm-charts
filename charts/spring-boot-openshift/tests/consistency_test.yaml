@@ -1,0 +1,31 @@
+suite: test route matches service
+values:
+  - ./values/test.yaml
+set:
+  ports:
+    - name: web
+      value: 9090
+templates:
+  - templates/route.yaml
+  - templates/service.yaml
+tests:
+  - it: route should point at an existing service and port
+    asserts:
+      - equal:
+          path: spec.to.name
+          value: sample-spring-boot-api
+        template: templates/route.yaml
+      - equal:
+          path: spec.port.targetPort
+          value: web
+        template: templates/route.yaml
+      - equal:
+          path: metadata.name
+          value: sample-spring-boot-api
+        template: templates/service.yaml
+      - contains:
+          path: spec.ports
+          content:
+            port: 9090
+            name: web
+        template: templates/service.yaml

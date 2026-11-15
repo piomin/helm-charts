@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "image": {
+      "description": "Container Image",
+      "title": "Image",
+      "form": true,
+      "properties": {
+        "repository": {
+          "type": "string",
+          "form": true,
+          "title": "The full address of repository"
+        },
+        "tag": {
+          "type": "string",
+          "form": true,
+          "title": "The image tag"
+        }
+      },
+      "type": "object",
+      "required": [ "repository", "tag" ]
+    },
+    "app": {
+      "description": "Application Settings",
+      "properties": {
+        "name": {
+          "type": "string",
+          "form": true,
+          "title": "The name of Deployment on Kubernetes"
+        },
+        "environment": {
+          "type": "string",
+          "form": true,
+          "title": "The label indicating app environment"
+        },
+        "owner": {
+          "type": "string",
+          "form": true,
+          "title": "The owner name"
+        }
+      },
+      "type": "object",
+      "required": [ "name" ]
+    },
+    "replicaCount": {
+      "title": "Number of replicas",
+      "minimum": 1,
+      "form": true,
+      "type": "integer"
+    },
+    "service": {
+      "description": "Service",
+      "title": "Service",
+      "type": "object",
+      "form": true,
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Service Type",
+          "form": true,
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "title": "Required Resources",
+      "description": "Configure resource requests",
+      "form": true,
+      "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "memory": { "type": "string", "title": "Memory Limit" },
+            "cpu": { "type": "string", "title": "CPU Limit" }
+          }
+        },
+        "requests": {
+          "type": "object",
+          "properties": {
+            "memory": {
+              "type": "string",
+              "form": true,
+              "render": "slider",
+              "title": "Memory Request",
+              "sliderMin": 10,
+              "sliderMax": 2048,
+              "sliderUnit": "Mi"
+            },
+            "cpu": {
+              "type": "string",
+              "form": true,
+              "render": "slider",
+              "title": "CPU Request",
+              "sliderMin": 10,
+              "sliderMax": 2000,
+              "sliderUnit": "m"
+            }
+          }
+        }
+      }
+    },
+    "envs": {
+      "description": "Environment variables",
+      "title": "Environment variables",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "name", "value" ],
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": ["string", "number", "boolean"] }
+        }
+      }
+    },
+    "extraEnvVarsSecret": {
+      "description": "Environment variables read from Secret keys",
+      "title": "Env vars from Secrets",
+      "type": "array",
+      "items": { "$ref": "#/$defs/envRef" }
+    },
+    "extraEnvVarsConfigMap": {
+      "description": "Environment variables read from ConfigMap keys",
+      "title": "Env vars from ConfigMaps",
+      "type": "array",
+      "items": { "$ref": "#/$defs/envRef" }
+    },
+    "secrets": {
+      "description": "Secret created from the given values and injected with envFrom",
+      "title": "Secrets",
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "values": { "type": "object" }
+      }
+    },
+    "ingress": {
+      "description": "Ingress",
+      "title": "Ingress",
+      "type": "object",
+      "form": true,
+      "properties": {
+        "enabled": { "type": "boolean", "form": true, "title": "Create Ingress" },
+        "className": { "type": "string", "title": "Ingress class name" },
+        "host": { "type": "string", "title": "Host (defaults to app.name)" },
+        "path": { "type": "string", "title": "Path" },
+        "pathType": {
+          "type": "string",
+          "title": "Path type",
+          "enum": [ "Prefix", "Exact", "ImplementationSpecific" ]
+        },
+        "servicePort": { "type": "string", "title": "Name of the Service port" },
+        "annotations": { "type": "object" },
+        "tls": { "type": "array" }
+      }
+    },
+    "liveness": {
+      "description": "Liveness probe",
+      "title": "Liveness probe",
+      "type": "object",
+      "properties": {
+        "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+        "port": { "type": ["string", "integer"] },
+        "path": { "type": "string" },
+        "failureThreshold": { "type": "integer", "minimum": 1 },
+        "successThreshold": { "type": "integer", "minimum": 1 },
+        "timeoutSeconds": { "type": "integer", "minimum": 1 },
+        "periodSeconds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "readiness": {
+      "description": "Readiness probe",
+      "title": "Readiness probe",
+      "type": "object",
+      "properties": {
+        "initialDelaySeconds": { "type": "integer", "minimum": 0 },
+        "port": { "type": ["string", "integer"] },
+        "path": { "type": "string" },
+        "failureThreshold": { "type": "integer", "minimum": 1 },
+        "successThreshold": { "type": "integer", "minimum": 1 },
+        "timeoutSeconds": { "type": "integer", "minimum": 1 },
+        "periodSeconds": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "ports": {
+      "description": "Container Ports",
+      "title": "Ports",
+      "type": "array",
+      "form": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/port"
+      }
+    }
+  },
+  "$defs": {
+    "envRef": {
+      "type": "object",
+      "required": [ "envVarName", "key", "name" ],
+      "properties": {
+        "envVarName": { "type": "string", "description": "Name of the environment variable." },
+        "key": { "type": "string", "description": "Key in the Secret or ConfigMap." },
+        "name": { "type": "string", "description": "Name of the Secret or ConfigMap." }
+      }
+    },
+    "port": {
+      "type": "object",
+      "required": [ "name", "value" ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the port."
+        },
+        "value": {
+          "type": "integer",
+          "description": "The number of port."
+        }
+      }
+    }
+  },
+  "required": [ "ports" ],
+  "title": "Spring Boot API App"
+}

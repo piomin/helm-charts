@@ -1,0 +1,69 @@
+suite: test ingress
+values:
+  - ./values/test.yaml
+templates:
+  - templates/ingress.yaml
+tests:
+  - it: should not render when disabled
+    asserts:
+      - hasDocuments:
+          count: 0
+  - it: should render valid ingress with defaults
+    set:
+      ingress.enabled: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - isAPIVersion:
+          of: networking.k8s.io/v1
+      - equal:
+          path: spec.rules[0].host
+          value: sample-spring-boot-api
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: Prefix
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          value: sample-spring-boot-api
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.name
+          value: http
+      - notExists:
+          path: spec.ingressClassName
+      - notExists:
+          path: spec.tls
+  - it: should honour custom settings
+    set:
+      ingress:
+        enabled: true
+        className: nginx
+        host: api.example.com
+        path: /api
+        pathType: ImplementationSpecific
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /
+        tls:
+          - hosts: [api.example.com]
+            secretName: api-tls
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: nginx
+      - equal:
+          path: spec.rules[0].host
+          value: api.example.com
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /api
+      - equal:
+          path: spec.rules[0].http.paths[0].pathType
+          value: ImplementationSpecific
+      - equal:
+          path: metadata.annotations["nginx.ingress.kubernetes.io/rewrite-target"]
+          value: /
+      - equal:
+          path: spec.tls[0].secretName
+          value: api-tls

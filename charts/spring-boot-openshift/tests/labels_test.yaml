@@ -1,0 +1,36 @@
+suite: test labels
+values:
+  - ./values/test.yaml
+release:
+  name: rel
+templates:
+  - templates/deployment.yaml
+  - templates/service.yaml
+tests:
+  - it: should add recommended labels to metadata
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: spring-boot-openshift
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: rel
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+      - equal:
+          path: metadata.labels.app
+          value: sample-spring-boot-api
+  - it: should keep pod labels stable across chart versions
+    template: templates/deployment.yaml
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels["app.kubernetes.io/instance"]
+          value: rel
+      - notExists:
+          path: spec.template.metadata.labels["helm.sh/chart"]
+      - notExists:
+          path: spec.template.metadata.labels["app.kubernetes.io/version"]
+      - equal:
+          path: spec.selector.matchLabels.app
+          value: sample-spring-boot-api
