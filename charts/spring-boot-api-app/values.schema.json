@@ -98,6 +98,60 @@
         }
       }
     },
+    "envs": {
+      "description": "Environment variables",
+      "title": "Environment variables",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "name", "value" ],
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": ["string", "number", "boolean"] }
+        }
+      }
+    },
+    "extraEnvVarsSecret": {
+      "description": "Environment variables read from Secret keys",
+      "title": "Env vars from Secrets",
+      "type": "array",
+      "items": { "$ref": "#/$defs/envRef" }
+    },
+    "extraEnvVarsConfigMap": {
+      "description": "Environment variables read from ConfigMap keys",
+      "title": "Env vars from ConfigMaps",
+      "type": "array",
+      "items": { "$ref": "#/$defs/envRef" }
+    },
+    "secrets": {
+      "description": "Secret created from the given values and injected with envFrom",
+      "title": "Secrets",
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "values": { "type": "object" }
+      }
+    },
+    "ingress": {
+      "description": "Ingress",
+      "title": "Ingress",
+      "type": "object",
+      "form": true,
+      "properties": {
+        "enabled": { "type": "boolean", "form": true, "title": "Create Ingress" },
+        "className": { "type": "string", "title": "Ingress class name" },
+        "host": { "type": "string", "title": "Host (defaults to app.name)" },
+        "path": { "type": "string", "title": "Path" },
+        "pathType": {
+          "type": "string",
+          "title": "Path type",
+          "enum": [ "Prefix", "Exact", "ImplementationSpecific" ]
+        },
+        "servicePort": { "type": "string", "title": "Name of the Service port" },
+        "annotations": { "type": "object" },
+        "tls": { "type": "array" }
+      }
+    },
     "ports": {
       "description": "Container Ports",
       "title": "Ports",
@@ -109,6 +163,15 @@
     }
   },
   "$defs": {
+    "envRef": {
+      "type": "object",
+      "required": [ "envVarName", "key", "name" ],
+      "properties": {
+        "envVarName": { "type": "string", "description": "Name of the environment variable." },
+        "key": { "type": "string", "description": "Key in the Secret or ConfigMap." },
+        "name": { "type": "string", "description": "Name of the Secret or ConfigMap." }
+      }
+    },
     "port": {
       "type": "object",
       "required": [ "name", "value" ],

@@ -7,16 +7,27 @@ metadata:
     app: {{ .Values.app.name }}
     env: {{ .Values.app.environment }}
     owner: {{ .Values.app.owner }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- toYaml .Values.ingress.tls | nindent 4 }}
+  {{- end }}
   rules:
-    - host: {{ .Values.app.name }}
+    - host: {{ .Values.ingress.host | default .Values.app.name | quote }}
       http:
         paths:
-          {{- range .Values.ports }}
-          - path: {{ . }}
+          - path: {{ .Values.ingress.path }}
+            pathType: {{ .Values.ingress.pathType }}
             backend:
               service:
-                name: {{ .name }}
-                port: {{ .value }}
-          {{- end }}
+                name: {{ .Values.app.name }}
+                port:
+                  name: {{ .Values.ingress.servicePort }}
 {{- end }}

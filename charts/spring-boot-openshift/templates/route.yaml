@@ -1,3 +1,4 @@
+{{- if .Values.route.enabled }}
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
@@ -9,10 +10,19 @@ metadata:
   annotations:
     openshift.io/host.generated: 'true'
 spec:
+  {{- if .Values.route.host }}
+  host: {{ .Values.route.host }}
+  {{- end }}
   to:
     kind: Service
     name: {{ .Values.app.name }}
     weight: 100
   port:
-    targetPort: http
+    targetPort: {{ .Values.route.targetPort | default (index .Values.ports 0).name }}
+  {{- if .Values.route.tls.enabled }}
+  tls:
+    termination: {{ .Values.route.tls.termination }}
+    insecureEdgeTerminationPolicy: {{ .Values.route.tls.insecureEdgeTerminationPolicy }}
+  {{- end }}
   wildcardPolicy: None
+{{- end }}

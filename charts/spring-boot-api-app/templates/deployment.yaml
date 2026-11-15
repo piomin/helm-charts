@@ -45,29 +45,25 @@ spec:
           - containerPort: {{ .value }}
             name: {{ .name }}
           {{- end }}
-          {{- if .Values.envs }}
+          {{- if or .Values.envs .Values.extraEnvVarsConfigMap .Values.extraEnvVarsSecret }}
           env:
           {{- range .Values.envs }}
           - name: {{ .name }}
-            value: {{ .value }}
+            value: {{ .value | quote }}
           {{- end }}
-          {{- if or .Values.extraEnvVarsConfigMap }}
           {{- range .Values.extraEnvVarsConfigMap }}
           - name: {{ .envVarName }}
             valueFrom:
-              configMapRef:
+              configMapKeyRef:
                 key: {{ .key }}
                 name: {{ .name }}
           {{- end }}
-          {{- end }}
-          {{- if or .Values.extraEnvVarsSecret }}
           {{- range .Values.extraEnvVarsSecret }}
           - name: {{ .envVarName }}
             valueFrom:
               secretKeyRef:
                 key: {{ .key }}
                 name: {{ .name }}
-          {{- end }}
           {{- end }}
           {{- end }}
           {{- if .Values.secrets.enabled }}
